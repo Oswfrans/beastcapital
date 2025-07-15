@@ -1,0 +1,25 @@
+name:                beast-capital
+version:             0.1.0.0
+github:              "beast-capital/beast-capital"
+license:             BSD3
+author:              "Beast Capital"
+maintainer:          "contact@beastcapital.com"
+copyright:           "2025 Beast Capital"
+
+extra-source-files:
+- README.md
+
+description:         Please see the README on GitHub at <https://github.com/beast-capital/beast-capital#readme>
+
+dependencies:
+- base >= 4.7 && < 5
+- hakyll
+
+executables:
+  site:
+    main:                site.hs
+    source-dirs:         .
+    ghc-options:
+    - -threaded
+    - -rtsopts
+    - -with-rtsopts=-N
