@@ -1,27 +1,52 @@
 stages:
+  - test
   - build
   - deploy
 
 variables:
   DOCKER_DRIVER: overlay2
   DOCKER_TLS_CERTDIR: "/certs"
+  DOCKER_BUILDKIT: 1
 
 services:
-  - docker:20.10.16-dind
+  - docker:24.0.5-dind
 
-before_script:
-  - docker login -u $CI_REGISTRY_USER -p $CI_REGISTRY_PASSWORD $CI_REGISTRY
+# Test stage to validate the Hakyll build
+test:
+  stage: test
+  image: haskell:8.10
+  script:
+    - echo "Testing Beast Capital Hakyll build"
+    - cabal update
+    - cabal build --dependencies-only
+    - cabal build
+    - cabal exec site build
+    - echo "Build test completed successfully"
+    - ls -la _site/
+  artifacts:
+    paths:
+      - _site/
+    expire_in: 1 hour
+  only:
+    - main
+    - develop
+    - merge_requests
 
 build:
   stage: build
-  image: docker:20.10.16
+  image: docker:24.0.5
+  before_script:
+    - docker login -u $CI_REGISTRY_USER -p $CI_REGISTRY_PASSWORD $CI_REGISTRY
   script:
     - echo "Building Docker image for Beast Capital website"
-    - docker build -t $CI_REGISTRY_IMAGE:$CI_COMMIT_SHA .
+    - docker build --build-arg BUILDKIT_INLINE_CACHE=1 -t $CI_REGISTRY_IMAGE:$CI_COMMIT_SHA .
     - docker tag $CI_REGISTRY_IMAGE:$CI_COMMIT_SHA $CI_REGISTRY_IMAGE:latest
     - echo "Pushing Docker image to GitLab Container Registry"
     - docker push $CI_REGISTRY_IMAGE:$CI_COMMIT_SHA
     - docker push $CI_REGISTRY_IMAGE:latest
+    - echo "Docker image pushed successfully"
+  dependencies:
+    - test
   only:
     - main
     - develop
@@ -29,8 +54,20 @@ build:
 deploy:
   stage: deploy
   image: google/cloud-sdk:alpine
+  before_script:
+    - echo "Preparing deployment to Google Cloud Run"
+    - apk add --no-cache curl jq
   script:
     - echo "Deploying Beast Capital website to Google Cloud Run"
+    
+    # Validate required environment variables
+    - |
+      if [ -z "$GCP_SERVICE_ACCOUNT_KEY" ] || [ -z "$GCP_PROJECT_ID" ]; then
+        echo "Error: Missing required environment variables"
+        echo "Please set GCP_SERVICE_ACCOUNT_KEY and GCP_PROJECT_ID"
+        exit 1
+      fi
+    
     # Authenticate with Google Cloud
     - echo $GCP_SERVICE_ACCOUNT_KEY | base64 -d > gcloud-service-key.json
     - gcloud auth activate-service-account --key-file gcloud-service-key.json
@@ -39,23 +76,39 @@ deploy:
     # Configure Docker to use gcloud as a credential helper
     - gcloud auth configure-docker
     
-    # Deploy to Cloud Run
-    - gcloud run deploy beast-capital-website 
-        --image $CI_REGISTRY_IMAGE:$CI_COMMIT_SHA 
-        --platform managed 
-        --region us-central1 
-        --allow-unauthenticated 
-        --port 80 
-        --memory 512Mi 
-        --cpu 1 
-        --max-instances 10 
-        --set-env-vars="ENV=production"
+    # Deploy to Cloud Run with improved configuration
+    - |
+      gcloud run deploy beast-capital-website \
+        --image $CI_REGISTRY_IMAGE:$CI_COMMIT_SHA \
+        --platform managed \
+        --region us-central1 \
+        --allow-unauthenticated \
+        --port 80 \
+        --memory 512Mi \
+        --cpu 1 \
+        --min-instances 0 \
+        --max-instances 10 \
+        --concurrency 80 \
+        --timeout 300 \
+        --set-env-vars="ENV=production,BUILD_SHA=$CI_COMMIT_SHA,BUILD_TIME=$(date -u +%Y-%m-%dT%H:%M:%SZ)" \
+        --labels="app=beast-capital,environment=production,version=$CI_COMMIT_SHORT_SHA"
     
-    # Get the service URL
-    - gcloud run services describe beast-capital-website --platform managed --region us-central1 --format 'value(status.url)'
+    # Get and display the service URL
+    - SERVICE_URL=$(gcloud run services describe beast-capital-website --platform managed --region us-central1 --format 'value(status.url)')
+    - echo "Beast Capital website deployed successfully!"
+    - echo "Service URL: $SERVICE_URL"
+    - echo "Build SHA: $CI_COMMIT_SHA"
+    
+    # Test the deployed service
+    - echo "Testing deployed service..."
+    - curl -f -s "$SERVICE_URL" | grep -q "Beast Capital" && echo "✅ Service is responding correctly" || echo "❌ Service test failed"
+    
+  dependencies:
+    - build
   only:
     - main
   when: manual
   environment:
     name: production
     url: https://beast-capital-website-$GCP_PROJECT_ID.a.run.app
+  timeout: 10m

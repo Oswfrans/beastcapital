@@ -1,0 +1,34 @@
+# Git
+.git
+.gitignore
+
+# Build artifacts
+dist-newstyle/
+.stack-work/
+_site/
+_cache/
+
+# IDE files
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# Logs
+*.log
+server.log
+
+# Documentation
+README.md
+docs/
+
+# CI/CD
+.gitlab-ci.yml
+
+# Docker
+Dockerfile
+.dockerignore

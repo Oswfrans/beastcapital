@@ -1,0 +1,11 @@
+# Stack build artifacts
+.stack-work/
+dist-newstyle/
+
+# Cabal build artifacts
+dist/
+
+# Other common files to ignore
+*.o
+*.hi
+stack.yaml.lock
