@@ -1,16 +1,22 @@
 # Multi-stage Dockerfile for Beast Capital Hakyll site
 
 # Stage 1: Build the Hakyll site
-FROM haskell:8.10 AS builder
+FROM haskell:9.4-slim AS builder
+
+# Install required system dependencies
+RUN apt-get update && apt-get install -y --no-install-recommends \
+    ca-certificates \
+    git \
+    && rm -rf /var/lib/apt/lists/*
 
 # Set working directory
 WORKDIR /app
 
-# Update cabal package list
-RUN cabal update
-
-# Copy cabal configuration files
+# Copy cabal configuration files first for better caching
 COPY beast-capital.cabal package.yaml ./
+
+# Update cabal and install dependencies (cached layer)
+RUN cabal update && cabal build --dependencies-only
 
 # Copy source files
 COPY site.hs ./
@@ -18,17 +24,14 @@ COPY index.md about.md contact.md ./
 COPY templates/ ./templates/
 COPY css/ ./css/
 
-# Install dependencies and build
-RUN cabal build --dependencies-only
+# Build the site
 RUN cabal build
-
-# Generate the static site
 RUN cabal exec site build
 
 # Stage 2: Serve with Nginx
 FROM nginx:alpine
 
-# Install additional tools for health checks
+# Install curl for health checks
 RUN apk add --no-cache curl
 
 # Remove default nginx website and config
