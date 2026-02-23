@@ -23,9 +23,8 @@ cache:
 # Test stage to validate the Hakyll build
 test:
   stage: test
-  image: haskell:9.4-slim
+  image: haskell:9.4
   before_script:
-    - apt-get update && apt-get install -y --no-install-recommends ca-certificates git
     - cabal update
   script:
     - echo "Testing Beast Capital Hakyll build"

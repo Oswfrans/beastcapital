@@ -1,13 +1,7 @@
 # Multi-stage Dockerfile for Beast Capital Hakyll site
 
 # Stage 1: Build the Hakyll site
-FROM haskell:9.4-slim AS builder
-
-# Install required system dependencies
-RUN apt-get update && apt-get install -y --no-install-recommends \
-    ca-certificates \
-    git \
-    && rm -rf /var/lib/apt/lists/*
+FROM haskell:9.4 AS builder
 
 # Set working directory
 WORKDIR /app
