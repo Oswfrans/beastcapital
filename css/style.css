@@ -230,3 +230,28 @@ main h1 + p a {
     font-weight: bold;
     letter-spacing: 1px;
 }
+
+/* Video container styling */
+.video-container {
+    margin: 2rem 0;
+    background-color: #2a2a2a;
+    padding: 1rem;
+    border-radius: 8px;
+    border: 2px solid #ffd700;
+}
+
+.video-container iframe {
+    width: 100%;
+    max-width: 800px;
+    margin: 0 auto;
+}
+
+/* Small helper text styling */
+h1 + .video-container + p,
+h1 + p:has(> em),
+p:has(> em:only-child) {
+    font-size: 0.9rem;
+    color: #888;
+    text-align: center;
+    margin-top: 0.5rem;
+}
