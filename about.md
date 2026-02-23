@@ -5,10 +5,7 @@ title: About Beast Capital
 # About Beast Capital
 
 <div class="video-container">
-<iframe width="100%" height="400" src="https://www.youtube.com/embed/VIDEO_ID_PLACEHOLDER" title="Beast Capital" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
-</div>
-
-*Replace VIDEO_ID_PLACEHOLDER with your YouTube video ID*
+<iframe width="100%" height="600" src="https://www.youtube.com/embed/a9R_qJeOvsQ" title="Beast Capital" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
 
 ## Our Investment Philosophy
 
