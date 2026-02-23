@@ -31,3 +31,9 @@ Beast Capital specializes in:
 What sets us apart is our unwavering commitment to performance. We don't settle for market returns—we aim to beast them. Our aggressive approach, combined with rigorous risk management, has consistently delivered superior results for our clients.
 
 Join the pack. Experience the Beast Capital difference.
+
+## Learn More
+
+<iframe width="560" height="315" src="https://www.youtube.com/embed/VIDEO_ID_PLACEHOLDER" title="Beast Capital" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+
+*Replace VIDEO_ID_PLACEHOLDER with your YouTube video ID*
