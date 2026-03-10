@@ -9,7 +9,7 @@ title: About Beast Capital
 
 ## Our Investment Philosophy
 
-At Beast Capital, we believe in the power of aggressive, intelligent investing. Our philosophy is built on three core principles. And yes, even though I quit injecting testosterone, I'm still aggressively pursuing profit—because the beast mentality isn't about what you put in your body, it's about the hunger that drives you.
+At Beast Capital, we believe in the power of aggressive, intelligent investing. Our philosophy is built on three core principles. Our fund drives real returns through discipline, aggression and commitment. Our team is an embodiment of these values. In my career as professional athlete, my friends and colleagues thought my muscle mass would plummet after quitting Rugby or letting go of suplements and testosterone. And guess what happened? I didnt' survive, I thrived. Now bigger and stronger than ever, I bring that commitment to our investors.
 
 ### 1. Ferocious Market Analysis
 We don't just watch the market—we hunt it. Our team conducts deep, comprehensive analysis to identify opportunities that others miss. We leverage advanced quantitative models, fundamental analysis, and market sentiment indicators to stay ahead of the curve.
